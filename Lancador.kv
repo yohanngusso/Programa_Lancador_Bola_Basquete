@@ -1,0 +1,227 @@
+#:import utils kivy.utils
+#Lancador ORIGINAL da versão 4
+<Cenario>:
+    orientation: 'vertical'
+
+    #bind entre a variavel "bola" (arquivo main.py)
+    #com a instancia do objeto da classe Ball  "ball_id" (interface)
+    bola: ball_id
+    cesta: cesta_id
+
+    canvas.before:
+        #Fundo azul
+        Color:
+            rgb: utils.get_color_from_hex('#eafbfe') 
+        Rectangle:
+            pos: (self.width-400, self.height-400)
+            size: (self.width, self.width)
+       
+        #Linha marrom do chao
+        Color:
+            rgb: utils.get_color_from_hex('#814805')
+        Line:
+            width: 4.0
+            points: self.width-400, self.height-400, self.width, self.height-400
+
+    #Layout para colocar a bola e a mensagem de sucesso ou erro
+    FloatLayout:
+    
+        #Instancia um objeto da classe Ball
+
+        Label:
+            Bola:
+                id: ball_id
+
+        Label:
+            Cesta:
+                id: cesta_id
+
+        #Mensagem de sucesso ou erro
+        Label:
+            id: mensagem
+            pos_hint: {'center_x': 0.5, 'top' : 1.4}
+            text:''
+            font_size:40
+            markup:True
+
+    #Layout de Tentativas, Acertos e Som
+    BoxLayout:
+        id: param
+        size_hint_y: None
+        height: root.height-530
+        orientation: 'horizontal'
+
+        #Tentativas
+        FloatLayout:
+            Label:
+                size_hint_y: None
+                height: 40
+                size_hint_x: None
+                width: 30
+                pos_hint: {'x': 0.3, 'y': 0.15}
+                text: 'Tentativas:'
+            Label:
+                id:txTent
+                size_hint_y: None
+                height: 35
+                size_hint_x: None
+                width: 45
+                multiline: False
+                hint_text: ''
+                pos_hint: {'x': 0.65, 'y': 0.15}
+                font_size:30
+                text: '0'
+                
+        #Tentativas_Acertos
+        FloatLayout:
+            Label:
+                size_hint_y: None
+                height: 40
+                size_hint_x: None
+                width: 30
+                pos_hint: {'x': 0.30, 'y': 0.15}
+                text: 'Acertos:'
+            Label:
+                id:txAcertos
+                size_hint_y: None
+                height: 35
+                size_hint_x: None
+                width: 45
+                multiline: False
+                hint_text: ''
+                pos_hint: {'x': 0.6, 'y': 0.15}
+                font_size:30
+                text: '0'
+
+        #Som
+        FloatLayout:
+            Label:
+                size_hint_y: None
+                height: 40
+                size_hint_x: None
+                width: 30
+                pos_hint: {'x': 0.3, 'y': 0.15}
+                text: 'Mudo:'
+            CheckBox:
+                id:check_som
+                active: False
+                size_hint: (None,None)
+                height: 40
+                width: 40
+                pos_hint: {'x': 0.65, 'y': 0.15}
+                on_active: root.ControlaSom()
+
+
+      #Layout de entrada dos parametros
+    BoxLayout:
+        id: param
+        size_hint_y: None
+        height: root.height-530
+        orientation: 'horizontal'
+
+        #Velocidade inicial (v0 (m/s))
+        FloatLayout:
+            Label:
+                size_hint_y: None
+                height: 40
+                size_hint_x: None
+                width: 30
+                pos_hint: {'x': 0.1, 'y': 0.1}
+                text: 'v0:'
+            TextInput:
+                id: txVel
+                size_hint: (None, None)
+                height: 35
+                width: 45
+                multiline: False
+                text: '0'
+                pos_hint: {'x': 0.3, 'y': 0.1}
+
+        #Angulo de lancamento (Theta (graus))
+        FloatLayout:
+            Label:
+                size_hint_y: None
+                height: 40
+                size_hint_x: None
+                width: 30
+                text: 'Theta:'
+                pos_hint: {'x': 0.18, 'y': 0.1}
+            TextInput:
+                id: txAng
+                size_hint: (None, None)
+                height: 35
+                width: 45
+                multiline: False
+                text: '0'
+                pos_hint: {'x': 0.47, 'y': 0.1}
+
+        #Gravidade de lançamento
+        FloatLayout:
+            Label:
+                size_hint_y: None
+                height: 40
+                size_hint_x: None
+                width: 30
+                text: 'G:'
+                pos_hint: {'x': 0.18, 'y': 0.1}
+            Spinner:
+                id: spin_id
+                size_hint: (None, None)
+                height: 40
+                width: 90
+                text: ('Terra(9.8)')
+                values: ('Terra(9.8)', 'Lua(1.6)','Jupiter(24.8)','Saturno(10.4)')
+                pos_hint: {'x': 0.4, 'y': 0.1}
+                on_text:root.inicializar()
+                
+
+    
+    #Layout dos botoes
+    FloatLayout:
+        size_hint_y: None
+        height: 80
+        #Botao "lanca"
+        Button:
+            size_hint: (None, None)
+            height: 40
+            width: 120
+            pos_hint: {'center_x': 0.18, 'center_y': 0.50}
+            text: 'Lancar'
+            on_press: root.LancarClick()
+        
+        #Botao "reinicio"    
+        Button:
+            size_hint: (None, None)
+            height: 40
+            width: 120
+            pos_hint: {'center_x': 0.50, 'center_y': 0.50}
+            text: 'Reiniciar'
+            on_press: root.inicializar()
+
+        #Botao "sair"    
+        Button:
+            size_hint: (None, None)
+            height: 40
+            width: 120
+            pos_hint: {'center_x': 0.82, 'center_y': 0.50}
+            text: 'Sair'
+            on_press: root.Sair()
+
+#Modela o objeto da bola de basquete        
+<Bola>:
+    size: 50, 50
+    canvas.after:
+        Color:
+            rgba:1, 1, 1, 1
+        Ellipse:
+            pos: self.pos
+            size: self.size
+            source:'./ball.png'
+
+#Modela a cesta de basquete
+<Cesta>:
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: (100, 100)
+            source: './tabela.png'
